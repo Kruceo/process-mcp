@@ -1,0 +1,22 @@
+{
+  "name": "process-mcp",
+  "version": "0.0.1",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "test": "bun test",
+    "start": "bun run dist/index.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^26.0.1",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "nanoid": "^5.1.16"
+  }
+}
