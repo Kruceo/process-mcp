@@ -12,8 +12,8 @@ export class ProcessManager {
       command,
       args,
       status: "running" as ProcessStatus,
-      pid: null,
-      startedAt: new Date().toISOString(),
+      pid: undefined,
+      startedAt: new Date(),
       logs: [],
     };
 
