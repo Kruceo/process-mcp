@@ -1,6 +1,11 @@
 export type ProcessId = string;
 
-export type ProcessStatus = "running" | "stopped" | "crashed" | "unknown";
+export type ProcessStatus =
+  | "running"
+  | "stopped"
+  | "exited"
+  | "crashed"
+  | "not-exists";
 
 export interface ProcessInfo {
   id: ProcessId;
@@ -12,10 +17,11 @@ export interface ProcessInfo {
   startedAt: Date;
   stoppedAt?: Date;
   logs: string[];
+  notifyOnExit?: boolean;
 }
 
 export interface StartProcessOptions {
-  command: string;
+  command?: string;
   args?: string[];
   cwd?: string;
   env?: Record<string, string>;
