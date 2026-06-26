@@ -315,7 +315,7 @@ export class ProcessManager {
 
     try {
       if (process.platform === "win32") {
-        nodeSpawn("taskkill", ["/F", "/PID", String(pid)], { stdio: "ignore" });
+        nodeSpawn("taskkill", ["/T", "/F", "/PID", String(pid)], { stdio: "ignore" });
       } else {
         process.kill(pid, "SIGKILL");
       }
