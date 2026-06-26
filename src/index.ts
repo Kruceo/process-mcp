@@ -197,6 +197,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ["id"],
       },
     },
+    {
+      name: "remove",
+      description:
+        "Remove a stopped or exited process from the managed list. Running processes cannot be removed.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          id: {
+            type: "string",
+            description: "Process ID",
+          },
+        },
+        required: ["id"],
+      },
+    },
   ],
 }));
 
@@ -311,6 +326,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: "text",
               text: `Process "${parsed.id}" PID: ${pid ?? "null"}`,
+            },
+          ],
+        };
+      }
+
+      case "remove": {
+        const parsed = idSchema.parse(args);
+        const info = processManager.remove(parsed.id);
+
+        if (!info) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Process "${parsed.id}" not found or still running`,
+              },
+            ],
+            isError: true,
+          };
+        }
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Process "${info.id}" removed (was: ${info.status})`,
             },
           ],
         };

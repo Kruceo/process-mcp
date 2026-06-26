@@ -47,7 +47,7 @@ Add `process-mcp` to your MCP client configuration. For opencode, edit `~/.confi
       "command": "bun",
       "args": [
         "run",
-        "C:/Users/Rafael/Documents/projects/process-mcp/dist/index.js"
+        "/path/to/process-mcp/dist/index.js"
       ]
     }
   }
