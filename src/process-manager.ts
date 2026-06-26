@@ -14,9 +14,10 @@ const MAX_LOG_LINES = 1000;
 const SIGTERM_TIMEOUT_MS = 5000;
 
 interface ManagedProcess extends ProcessInfo {
-  _proc: Bun.Subprocess | ChildProcess;
+  _proc: Bun.Subprocess | ChildProcess | null;
   _killed: boolean;
 }
+
 
 export class ProcessManager {
   private processes = new Map<ProcessId, ManagedProcess>();
@@ -90,6 +91,10 @@ export class ProcessManager {
         subprocess.on("exit", (exitCode, signalCode) => {
           this.handleExit(id, exitCode ?? null, signalCode ?? null);
         });
+
+        subprocess.unref();
+        subprocess.stdout?.unref?.();
+        subprocess.stderr?.unref?.();
       }
     } catch (error) {
       const failedInfo: ProcessInfo = {
@@ -156,19 +161,54 @@ export class ProcessManager {
   }
 
   list(): ProcessInfo[] {
-    return Array.from(this.processes.values()).map((info) => ({ ...info }));
+    return Array.from(this.processes.values()).map((info) => ({
+      ...info,
+      logs: [...info.logs],
+    }));
   }
 
   getPid(id: ProcessId): number | null {
     return this.processes.get(id)?.pid ?? null;
   }
 
-  shutdown(): void {
+  remove(id: ProcessId): ProcessInfo | null {
+    const info = this.processes.get(id);
+    if (!info) return null;
+
+    if (info.status === "running") {
+      return null;
+    }
+
+    const removed = { ...info, logs: [...info.logs] };
+    this.processes.delete(id);
+    return removed;
+  }
+
+  async shutdown(timeoutMs = 10000): Promise<void> {
+    const running: Promise<void>[] = [];
+
     for (const [id, info] of this.processes.entries()) {
       if (info.status === "running" && info.pid) {
         this.killGracefully(id, info.pid);
+
+        running.push(
+          new Promise<void>((resolve) => {
+            const check = () => {
+              const current = this.processes.get(id);
+              if (!current || current.status !== "running") {
+                resolve();
+                return;
+              }
+              setTimeout(check, 50);
+            };
+            check();
+            setTimeout(resolve, timeoutMs);
+          })
+        );
       }
     }
+
+    await Promise.all(running);
   }
 
   private pumpReader(
@@ -237,6 +277,9 @@ export class ProcessManager {
     }
     info.stoppedAt = new Date();
 
+    // Release the subprocess handle to allow GC.
+    info._proc = null as any;
+
     this.onExit?.(info);
   }
 
@@ -248,7 +291,7 @@ export class ProcessManager {
 
     try {
       if (process.platform === "win32") {
-        nodeSpawn("taskkill", ["/PID", String(pid)], { stdio: "ignore" });
+        nodeSpawn("taskkill", ["/T", "/PID", String(pid)], { stdio: "ignore" });
       } else {
         process.kill(pid, "SIGTERM");
       }

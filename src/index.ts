@@ -41,9 +41,7 @@ export const processManager = new ProcessManager({
 
 async function shutdown(signal: string): Promise<void> {
   console.error(`Received ${signal}, shutting down gracefully...`);
-  processManager.shutdown();
-  // Give child processes a short window to terminate before exiting.
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await processManager.shutdown();
   await server.close();
   process.exit(0);
 }

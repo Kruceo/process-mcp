@@ -21,8 +21,6 @@ export interface ProcessInfo {
 }
 
 export interface StartProcessOptions {
-  command?: string;
-  args?: string[];
   cwd?: string;
   env?: Record<string, string>;
   notifyOnExit?: boolean;
