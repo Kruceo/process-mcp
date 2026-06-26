@@ -2,8 +2,10 @@ import { nanoid } from "nanoid";
 import type { ChildProcess } from "node:child_process";
 import { spawn as nodeSpawn } from "node:child_process";
 import type {
+  ProcessExitCallback,
   ProcessId,
   ProcessInfo,
+  ProcessManagerOptions,
   ProcessStatus,
   StartProcessOptions,
 } from "./types.js";
@@ -227,6 +229,8 @@ export class ProcessManager {
       info.status = signalCode === "SIGKILL" ? "stopped" : "exited";
     }
     info.stoppedAt = new Date();
+
+    this.onExit?.(info);
   }
 
   private killGracefully(id: ProcessId, pid: number): void {

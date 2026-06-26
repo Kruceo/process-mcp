@@ -45,3 +45,7 @@ export interface ProcessExitNotification {
 }
 
 export type ProcessExitCallback = (notification: ProcessExitNotification) => void;
+
+export interface ProcessManagerOptions {
+  onExit?: ProcessExitCallback;
+}
