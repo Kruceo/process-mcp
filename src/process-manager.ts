@@ -20,6 +20,11 @@ interface ManagedProcess extends ProcessInfo {
 
 export class ProcessManager {
   private processes = new Map<ProcessId, ManagedProcess>();
+  private onExit?: (info: ProcessInfo) => void | Promise<void>;
+
+  constructor(options?: ProcessManagerOptions) {
+    this.onExit = options?.onExit;
+  }
 
   start(
     command: string,
@@ -193,6 +198,8 @@ export class ProcessManager {
         }
       } catch {
         // Ignore read errors after process exit.
+      } finally {
+        reader.releaseLock();
       }
     };
 

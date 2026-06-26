@@ -35,7 +35,7 @@ export interface ProcessExitNotification {
   timestamp: string;
 }
 
-export type ProcessExitCallback = (notification: ProcessExitNotification) => void;
+export type ProcessExitCallback = (info: ProcessInfo) => void | Promise<void>;
 
 export interface ProcessManagerOptions {
   onExit?: ProcessExitCallback;
