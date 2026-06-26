@@ -1,0 +1,28 @@
+{
+  // JSON Schema for editor validation and autocomplete
+  "$schema": "https://opencode.ai/config.json",
+
+  // MCP servers: local/remote tools available to opencode agents.
+  // Here we register the process-mcp server so opencode can manage
+  // background processes through this project's own MCP implementation.
+  "mcp": {
+    "process-mcp": {
+      // Local server: spawned as a child process on the user's machine
+      "type": "local",
+
+      // Development command: runs the TypeScript source directly via Bun,
+      // so no build step is required while working on the server.
+      "command": ["bun", "run", "src/index.ts"],
+
+      // Enable this MCP server in the current project
+      "enabled": true,
+
+      // Environment variables passed to the server process (empty by default)
+      "env": {}
+    }
+  },
+
+  // Project-level instructions loaded into agent context.
+  // AGENTS.md defines roles, workflow, commit conventions, and quality gates.
+  "instructions": ["AGENTS.md"]
+}
