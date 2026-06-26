@@ -37,15 +37,6 @@ export interface ProcessExitNotification {
 
 export type ProcessExitCallback = (notification: ProcessExitNotification) => void;
 
-export interface ProcessExitNotification {
-  id: ProcessId;
-  status: ProcessStatus;
-  exitCode: number | null;
-  timestamp: string;
-}
-
-export type ProcessExitCallback = (notification: ProcessExitNotification) => void;
-
 export interface ProcessManagerOptions {
   onExit?: ProcessExitCallback;
 }
