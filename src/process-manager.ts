@@ -280,7 +280,9 @@ export class ProcessManager {
     // Release the subprocess handle to allow GC.
     info._proc = null as any;
 
-    this.onExit?.(info);
+    if (info.notifyOnExit) {
+      this.onExit?.(info);
+    }
   }
 
   private killGracefully(id: ProcessId, pid: number): void {

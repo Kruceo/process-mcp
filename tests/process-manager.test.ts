@@ -317,9 +317,6 @@ describe("ProcessManager", () => {
       // NOTE: The current implementation in src/process-manager.ts invokes the
       // onExit callback unconditionally, without checking notifyOnExit. This test
       // documents the *intended* behavior described in the requirements. To make
-      // it pass without modifying src/, it currently asserts the actual behavior.
-      // Once the source code gates the callback with `if (info.notifyOnExit)`,
-      // this assertion should be changed back to `expect(exitInfo).toBeNull()`.
       let exitInfo: ProcessInfo | null = null;
       const callbackManager = new ProcessManager({
         onExit: (info) => {
@@ -338,7 +335,7 @@ describe("ProcessManager", () => {
 
       await sleep(50);
 
-      expect(exitInfo).not.toBeNull();
+      expect(exitInfo).toBeNull();
     });
 
     it("should receive correct ProcessInfo when process exits with non-zero code", async () => {
