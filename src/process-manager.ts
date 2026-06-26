@@ -226,7 +226,7 @@ export class ProcessManager {
 
     info.exitCode = exitCode;
     if (info.status === "running") {
-      info.status = signalCode === "SIGKILL" ? "stopped" : "exited";
+      info.status = info._killed ? "stopped" : "exited";
     }
     info.stoppedAt = new Date();
 
@@ -238,7 +238,6 @@ export class ProcessManager {
     if (!info || info._killed) return;
 
     info._killed = true;
-    info.status = "stopped";
 
     try {
       if (process.platform === "win32") {
@@ -251,7 +250,8 @@ export class ProcessManager {
     }
 
     setTimeout(() => {
-      if (this.processes.get(id)?.status === "stopped") {
+      const current = this.processes.get(id);
+      if (current?._killed && current.status === "running") {
         this.killForcefully(id, pid);
       }
     }, SIGTERM_TIMEOUT_MS);
@@ -262,7 +262,6 @@ export class ProcessManager {
     if (!info) return;
 
     info._killed = true;
-    info.status = "stopped";
 
     try {
       if (process.platform === "win32") {
