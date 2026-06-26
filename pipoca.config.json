@@ -1,0 +1,15 @@
+{
+  "keys": {
+    "patch": ["fix", "style", "docs", "test", "refactor"],
+    "minor": ["feature", "update"],
+    "major": ["release"]
+  },
+  "commands": {
+    "before": [],
+    "after": [
+      "npm version $version$ --no-git-tag-version",
+      "git tag v$version$",
+      "git push origin main --tags"
+    ]
+  }
+}
