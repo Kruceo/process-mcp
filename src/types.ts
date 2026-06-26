@@ -27,3 +27,21 @@ export interface StartProcessOptions {
   env?: Record<string, string>;
   notifyOnExit?: boolean;
 }
+
+export interface ProcessExitNotification {
+  id: ProcessId;
+  status: ProcessStatus;
+  exitCode: number | null;
+  timestamp: string;
+}
+
+export type ProcessExitCallback = (notification: ProcessExitNotification) => void;
+
+export interface ProcessExitNotification {
+  id: ProcessId;
+  status: ProcessStatus;
+  exitCode: number | null;
+  timestamp: string;
+}
+
+export type ProcessExitCallback = (notification: ProcessExitNotification) => void;
